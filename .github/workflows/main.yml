@@ -1,4 +1,4 @@
-name: CI devops 2025
+name: CI/CD - DevOps 2025
 
 on:
   push:
@@ -23,18 +23,10 @@ jobs:
       - name: Build and test with Maven
         run: mvn clean verify --file ./simple-api/pom.xml
 
-
-name: CD - Build and Push Docker Images
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-24.04
     needs: test-backend
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
@@ -46,21 +38,20 @@ jobs:
       - name: Build and push backend
         uses: docker/build-push-action@v6
         with:
-          context: ./backend-hello
+          context: ./simple-api
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-backend:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
 
       - name: Build and push database
         uses: docker/build-push-action@v6
         with:
           context: ./database
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
 
       - name: Build and push httpd
         uses: docker/build-push-action@v6
         with:
           context: ./http-server
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
-
+          push: true
