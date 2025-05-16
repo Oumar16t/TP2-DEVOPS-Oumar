@@ -23,6 +23,16 @@ jobs:
       - name: Build and test with Maven
         run: mvn clean verify --file ./simple-api/pom.xml
 
+      - name: Analyze with SonarCloud
+        working-directory: ./simple-api
+        run: |
+          mvn -B verify sonar:sonar \
+            -Dsonar.projectKey=Oumar16t_TP2-DEVEOPS-Oumar \
+            -Dsonar.organization=oumar16t \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+
   build-and-push-docker-image:
     runs-on: ubuntu-24.04
     needs: test-backend
@@ -55,3 +65,4 @@ jobs:
           context: ./http-server
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
           push: true
+
