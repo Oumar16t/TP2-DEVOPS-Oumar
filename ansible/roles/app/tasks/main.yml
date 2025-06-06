@@ -1,0 +1,17 @@
+# tasks file for roles/app
+- name: Run backend API container
+  community.docker.docker_container:
+    name: simple-api
+    image: "{{ dockerhub_username }}/tp-devops-simple-api:latest"
+    pull: true
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://my_postgres:5432/mydb
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: mypass
+    ports:
+      - "8000:8000"
+    networks:
+      - name: app_network
+    restart_policy: always
+    state: started
+

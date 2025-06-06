@@ -1,0 +1,23 @@
+# tasks file for roles/database
+- name: Create pg_data volume
+  community.docker.docker_volume:
+    name: pg_data
+    state: present
+
+- name: Run PostgreSQL container
+  community.docker.docker_container:
+    name: my_postgres
+    image: "{{ dockerhub_username }}/tp-devops-database:latest"
+    env:
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_DB: "{{ postgres_db }}"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - name: app_network
+    restart_policy: always
+    state: started
+

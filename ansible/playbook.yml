@@ -1,0 +1,15 @@
+#playbook
+- name: Provision server and deploy app
+  hosts: all
+  become: true
+
+  vars_files:
+    - roles/app/vars/secret.yml
+
+  roles:
+    - docker
+    - network
+    - database
+    - app
+    - proxy
+
